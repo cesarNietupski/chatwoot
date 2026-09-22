@@ -30,7 +30,64 @@ if (currentYear) {
 
 
 // ======================================================
-// CONFIGURAÇÃO DO CHATWOOT
+// CAPTURA PARÂMETROS DA URL
+// ======================================================
+
+const params = new URLSearchParams(window.location.search);
+
+const utmSource = params.get("utm_source");
+const utmMedium = params.get("utm_medium");
+const utmCampaign = params.get("utm_campaign");
+
+console.log("======================================");
+console.log("PARÂMETROS RECEBIDOS NA URL");
+console.log("utm_source:", utmSource);
+console.log("utm_medium:", utmMedium);
+console.log("utm_campaign:", utmCampaign);
+console.log("======================================");
+
+
+// ======================================================
+// SALVA UTMs NO LOCALSTORAGE
+// ======================================================
+
+if (utmSource) {
+  localStorage.setItem("utm_source", utmSource);
+}
+
+if (utmMedium) {
+  localStorage.setItem("utm_medium", utmMedium);
+}
+
+if (utmCampaign) {
+  localStorage.setItem("utm_campaign", utmCampaign);
+}
+
+
+// ======================================================
+// MOSTRA O QUE FICOU SALVO
+// ======================================================
+
+console.log("UTMs armazenadas no localStorage:");
+
+console.log(
+  "utm_source:",
+  localStorage.getItem("utm_source")
+);
+
+console.log(
+  "utm_medium:",
+  localStorage.getItem("utm_medium")
+);
+
+console.log(
+  "utm_campaign:",
+  localStorage.getItem("utm_campaign")
+);
+
+
+// ======================================================
+// CONFIGURAÇÃO CHATWOOT
 // ======================================================
 
 window.chatwootSettings = {
@@ -41,33 +98,7 @@ window.chatwootSettings = {
 
 
 // ======================================================
-// CAPTURA DAS UTMs
-// ======================================================
-
-const params = new URLSearchParams(window.location.search);
-
-const utm_source = params.get("utm_source");
-const utm_medium = params.get("utm_medium");
-const utm_campaign = params.get("utm_campaign");
-
-
-// Salva as UTMs no navegador
-
-if (utm_source) {
-  localStorage.setItem("utm_source", utm_source);
-}
-
-if (utm_medium) {
-  localStorage.setItem("utm_medium", utm_medium);
-}
-
-if (utm_campaign) {
-  localStorage.setItem("utm_campaign", utm_campaign);
-}
-
-
-// ======================================================
-// CARREGA O SDK DO CHATWOOT
+// CARREGA SDK DO CHATWOOT
 // ======================================================
 
 (function (d, t) {
@@ -84,6 +115,8 @@ if (utm_campaign) {
 
   g.onload = function () {
 
+    console.log("SDK do Chatwoot carregado.");
+
     window.chatwootSDK.run({
       websiteToken: "nwZanXoAanndCKio2Gwj5yXV",
       baseUrl: BASE_URL
@@ -91,50 +124,98 @@ if (utm_campaign) {
 
   };
 
+  g.onerror = function () {
+    console.error("Erro ao carregar o SDK do Chatwoot.");
+  };
+
 })(document, "script");
 
 
 // ======================================================
-// QUANDO O CHATWOOT TERMINAR DE CARREGAR
+// QUANDO CHATWOOT ESTIVER PRONTO
 // ======================================================
 
 window.addEventListener("chatwoot:ready", function () {
 
-  console.log("Chatwoot carregado com sucesso.");
+  console.log("======================================");
+  console.log("CHATWOOT READY");
+  console.log("======================================");
 
-  const atributos = {};
-
-  const source = localStorage.getItem("utm_source");
-  const medium = localStorage.getItem("utm_medium");
-  const campaign = localStorage.getItem("utm_campaign");
-
-
-  if (source) {
-    atributos.utm_source = source;
-  }
-
-  if (medium) {
-    atributos.utm_medium = medium;
-  }
-
-  if (campaign) {
-    atributos.utm_campaign = campaign;
+  if (!window.$chatwoot) {
+    console.error("window.$chatwoot não está disponível.");
+    return;
   }
 
 
-  // Envia os atributos para o Chatwoot
+  // ====================================================
+  // RECUPERA UTMs
+  // ====================================================
+
+  const atributos = {
+    utm_source: localStorage.getItem("utm_source"),
+    utm_medium: localStorage.getItem("utm_medium"),
+    utm_campaign: localStorage.getItem("utm_campaign")
+  };
+
+
+  console.log("Atributos antes da limpeza:", atributos);
+
+
+  // ====================================================
+  // REMOVE CAMPOS VAZIOS OU NULL
+  // ====================================================
+
+  Object.keys(atributos).forEach((key) => {
+
+    if (
+      atributos[key] === null ||
+      atributos[key] === "" ||
+      atributos[key] === undefined
+    ) {
+
+      delete atributos[key];
+
+    }
+
+  });
+
+
+  console.log("Atributos após limpeza:", atributos);
+
+
+  // ====================================================
+  // ENVIA AO CHATWOOT
+  // ====================================================
+
   if (Object.keys(atributos).length > 0) {
 
-    window.$chatwoot.setCustomAttributes(atributos);
-
     console.log(
-      "Dados enviados ao Chatwoot:",
+      "Enviando atributos personalizados para o Chatwoot:",
       atributos
     );
 
+    try {
+
+      window.$chatwoot.setCustomAttributes(atributos);
+
+      console.log(
+        "setCustomAttributes executado com sucesso."
+      );
+
+    } catch (erro) {
+
+      console.error(
+        "Erro ao executar setCustomAttributes:",
+        erro
+      );
+
+    }
+
   } else {
 
-    console.log("Nenhuma UTM encontrada.");
+    console.warn(
+      "Nenhuma UTM disponível para enviar ao Chatwoot."
+    );
 
   }
 
@@ -142,18 +223,22 @@ window.addEventListener("chatwoot:ready", function () {
 
 
 // ======================================================
-// FUNÇÃO PARA ABRIR O CHATWOOT PELOS BOTÕES
+// FUNÇÃO PARA ABRIR CHATWOOT
 // ======================================================
 
 function openChatwoot() {
 
   if (window.$chatwoot) {
 
+    console.log("Abrindo Chatwoot...");
+
     window.$chatwoot.toggle("open");
 
   } else {
 
-    console.log("O Chatwoot ainda está carregando.");
+    console.warn(
+      "Chatwoot ainda não terminou de carregar."
+    );
 
   }
 
