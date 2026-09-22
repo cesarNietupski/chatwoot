@@ -30,6 +30,17 @@ if (currentYear) {
 
 
 // ======================================================
+// CONFIGURAÇÃO DO CHATWOOT
+// ======================================================
+
+window.chatwootSettings = {
+  position: "right",
+  type: "standard",
+  launcherTitle: ""
+};
+
+
+// ======================================================
 // CAPTURA PARÂMETROS DA URL
 // ======================================================
 
@@ -87,26 +98,15 @@ console.log(
 
 
 // ======================================================
-// CONFIGURAÇÃO CHATWOOT
-// ======================================================
-
-window.chatwootSettings = {
-  position: "right",
-  type: "standard",
-  launcherTitle: ""
-};
-
-
-// ======================================================
 // CARREGA SDK DO CHATWOOT
 // ======================================================
 
 (function (d, t) {
 
-  var BASE_URL = "https://chatwoot.neomind.com.br";
+  const BASE_URL = "https://chatwoot.neomind.com.br";
 
-  var g = d.createElement(t);
-  var s = d.getElementsByTagName(t)[0];
+  const g = d.createElement(t);
+  const s = d.getElementsByTagName(t)[0];
 
   g.src = BASE_URL + "/packs/js/sdk.js";
   g.async = true;
@@ -117,6 +117,15 @@ window.chatwootSettings = {
 
     console.log("SDK do Chatwoot carregado.");
 
+    if (!window.chatwootSDK) {
+      console.error(
+        "Erro: window.chatwootSDK não está disponível."
+      );
+
+      return;
+    }
+
+
     window.chatwootSDK.run({
       websiteToken: "nwZanXoAanndCKio2Gwj5yXV",
       baseUrl: BASE_URL
@@ -124,8 +133,13 @@ window.chatwootSettings = {
 
   };
 
+
   g.onerror = function () {
-    console.error("Erro ao carregar o SDK do Chatwoot.");
+
+    console.error(
+      "Erro ao carregar o SDK do Chatwoot."
+    );
+
   };
 
 })(document, "script");
@@ -135,91 +149,109 @@ window.chatwootSettings = {
 // QUANDO CHATWOOT ESTIVER PRONTO
 // ======================================================
 
-window.addEventListener("chatwoot:ready", function () {
+window.addEventListener(
+  "chatwoot:ready",
+  function () {
 
-  console.log("======================================");
-  console.log("CHATWOOT READY");
-  console.log("======================================");
-
-  if (!window.$chatwoot) {
-    console.error("window.$chatwoot não está disponível.");
-    return;
-  }
+    console.log("======================================");
+    console.log("CHATWOOT READY");
+    console.log("======================================");
 
 
-  // ====================================================
-  // RECUPERA UTMs
-  // ====================================================
+    // ==================================================
+    // VERIFICA SE O CHATWOOT ESTÁ DISPONÍVEL
+    // ==================================================
 
-  const atributos = {
-    utm_source: localStorage.getItem("utm_source"),
-    utm_medium: localStorage.getItem("utm_medium"),
-    utm_campaign: localStorage.getItem("utm_campaign")
-  };
+    if (!window.$chatwoot) {
 
+      console.error(
+        "window.$chatwoot não está disponível."
+      );
 
-  console.log("Atributos antes da limpeza:", atributos);
-
-
-  // ====================================================
-  // REMOVE CAMPOS VAZIOS OU NULL
-  // ====================================================
-
-  Object.keys(atributos).forEach((key) => {
-
-    if (
-      atributos[key] === null ||
-      atributos[key] === "" ||
-      atributos[key] === undefined
-    ) {
-
-      delete atributos[key];
+      return;
 
     }
 
-  });
+
+    // ==================================================
+    // RECUPERA UTMs DO LOCALSTORAGE
+    // ==================================================
+
+    const source =
+      localStorage.getItem("utm_source");
+
+    const medium =
+      localStorage.getItem("utm_medium");
+
+    const campaign =
+      localStorage.getItem("utm_campaign");
 
 
-  console.log("Atributos após limpeza:", atributos);
+    const atributos = {};
 
 
-  // ====================================================
-  // ENVIA AO CHATWOOT
-  // ====================================================
+    if (source) {
+      atributos.utm_source = source;
+    }
 
-  if (Object.keys(atributos).length > 0) {
+    if (medium) {
+      atributos.utm_medium = medium;
+    }
+
+    if (campaign) {
+      atributos.utm_campaign = campaign;
+    }
+
 
     console.log(
-      "Enviando atributos personalizados para o Chatwoot:",
+      "Atributos preparados para envio:",
       atributos
     );
 
-    try {
 
-      window.$chatwoot.setCustomAttributes(atributos);
+    // ==================================================
+    // ENVIA PARA O CHATWOOT
+    // ==================================================
+
+    if (Object.keys(atributos).length > 0) {
 
       console.log(
-        "setCustomAttributes executado com sucesso."
+        "Enviando atributos personalizados:",
+        atributos
       );
 
-    } catch (erro) {
 
-      console.error(
-        "Erro ao executar setCustomAttributes:",
-        erro
+      try {
+
+        window.$chatwoot.setCustomAttributes(
+          atributos
+        );
+
+
+        console.log(
+          "setCustomAttributes executado com sucesso:",
+          atributos
+        );
+
+      } catch (erro) {
+
+        console.error(
+          "Erro ao executar setCustomAttributes:",
+          erro
+        );
+
+      }
+
+    } else {
+
+      console.warn(
+        "Nenhuma UTM disponível para enviar ao Chatwoot."
       );
 
     }
 
-  } else {
-
-    console.warn(
-      "Nenhuma UTM disponível para enviar ao Chatwoot."
-    );
-
   }
-
-});
+);
 
 
 // ======================================================
