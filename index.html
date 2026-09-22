@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Página de demonstração com atendimento via Chatwoot." />
+
+  <title>Atendimento Online</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <header class="header">
+    <div class="container nav">
+      <a href="#" class="logo">
+        <span class="logo-icon">N</span>
+        <span>Neomind</span>
+      </a>
+
+      <nav class="menu">
+        <a href="#inicio">Início</a>
+        <a href="#recursos">Recursos</a>
+        <a href="#contato">Contato</a>
+      </nav>
+
+      <button class="menu-button" id="menuButton" aria-label="Abrir menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <div class="hero-blur hero-blur-one"></div>
+      <div class="hero-blur hero-blur-two"></div>
+
+      <div class="container hero-content">
+        <div class="hero-text">
+          <span class="badge">ATENDIMENTO ONLINE</span>
+
+          <h1>
+            Precisa de ajuda?
+            <span>Fale com nossa equipe.</span>
+          </h1>
+
+          <p>
+            Utilize o chat no canto inferior direito da tela para iniciar
+            uma conversa com nosso atendimento.
+          </p>
+
+          <div class="hero-actions">
+            <button class="primary-button" id="openChatButton">
+              Abrir atendimento
+            </button>
+
+            <a class="secondary-button" href="#recursos">
+              Saiba mais
+            </a>
+          </div>
+
+          <div class="status">
+            <span class="status-dot"></span>
+            Atendimento disponível
+          </div>
+        </div>
+
+        <div class="chat-preview">
+          <div class="chat-window">
+            <div class="chat-header">
+              <div class="avatar">N</div>
+
+              <div>
+                <strong>Suporte Neomind</strong>
+                <span>Online</span>
+              </div>
+
+              <div class="chat-dots">•••</div>
+            </div>
+
+            <div class="chat-body">
+              <div class="message received">
+                Olá! 👋 Como podemos ajudar você hoje?
+              </div>
+
+              <div class="message sent">
+                Preciso de ajuda com o sistema.
+              </div>
+
+              <div class="message received">
+                Claro! Nossa equipe está pronta para atender.
+              </div>
+            </div>
+
+            <div class="chat-input">
+              <span>Digite sua mensagem...</span>
+              <button aria-label="Enviar mensagem">➤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" id="recursos">
+      <div class="container">
+        <div class="section-heading">
+          <span>ATENDIMENTO</span>
+          <h2>Converse com nossa equipe de forma rápida</h2>
+          <p>
+            O Chatwoot será carregado automaticamente nesta página.
+          </p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Atendimento rápido</h3>
+            <p>
+              Inicie uma conversa diretamente pelo navegador.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">💬</div>
+            <h3>Chat integrado</h3>
+            <p>
+              O widget permanece disponível no canto inferior direito.
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <h3>Conexão segura</h3>
+            <p>
+              Comunicação utilizando seu ambiente Chatwoot.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact" id="contato">
+      <div class="container contact-box">
+        <div>
+          <span class="badge">FALE CONOSCO</span>
+          <h2>Ainda precisa de ajuda?</h2>
+          <p>
+            Clique no botão e abra o atendimento pelo Chatwoot.
+          </p>
+        </div>
+
+        <button class="primary-button" id="openChatButtonBottom">
+          Iniciar conversa
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+      <span>© <span id="currentYear"></span> Neomind</span>
+      <span>Atendimento via Chatwoot</span>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+
+  <!-- CHATWOOT -->
+  <script>
+    window.chatwootSettings = {
+      position: "right",
+      type: "standard",
+      launcherTitle: ""
+    };
+
+    (function(d, t) {
+      var BASE_URL = "https://chatwoot.neomind.com.br";
+      var g = d.createElement(t);
+      var s = d.getElementsByTagName(t)[0];
+
+      g.src = BASE_URL + "/packs/js/sdk.js";
+      g.async = true;
+
+      s.parentNode.insertBefore(g, s);
+
+      g.onload = function() {
+        window.chatwootSDK.run({
+          websiteToken: "nwZanXoAanndCKio2Gwj5yXV",
+          baseUrl: BASE_URL
+        });
+      };
+    })(document, "script");
+  </script>
+</body>
+</html>
